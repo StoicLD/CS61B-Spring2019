@@ -3,28 +3,46 @@
  */
 public class LeapYear {
 
+    private static boolean isLeapYear(int year)
+    {
+        if(year % 400 == 0)
+            return true;
+        else if((year % 100 != 0) && (year % 4 == 0))
+            return true;
+        return false;
+    }
+
+
     /** Calls isLeapYear to print correct statement.
      *  @param  year to be analyzed
      */
     private static void checkLeapYear(int year) {
-        if (isLeapYear(year)) {
+        if (isLeapYear(year))
+        {
             System.out.printf("%d is a leap year.\n", year);
-        } else {
+        }
+        else
+        {
             System.out.printf("%d is not a leap year.\n", year);
         }
     }
 
     /** Must be provided an integer as a command line argument ARGS. */
     public static void main(String[] args) {
-        if (args.length < 1) {
+        if (args.length < 1)
+        {
             System.out.println("Please enter command line arguments.");
             System.out.println("e.g. java Year 2000");
         }
-        for (int i = 0; i < args.length; i++) {
-            try {
+        for (int i = 0; i < args.length; i++)
+        {
+            try
+            {
                 int year = Integer.parseInt(args[i]);
                 checkLeapYear(year);
-            } catch (NumberFormatException e) {
+            }
+            catch (NumberFormatException e)
+            {
                 System.out.printf("%s is not a valid number.\n", args[i]);
             }
         }
