@@ -37,7 +37,7 @@ public class IntList {
      * Returns a list equal to L with all elements squared. Destructive.
      */
     public static void dSquareList(IntList L) {
-
+        // destructive means modify the element
         while (L != null) {
             L.first = L.first * L.first;
             L = L.rest;
@@ -82,7 +82,17 @@ public class IntList {
 
     public static IntList dcatenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+        if (A == null)
+        {
+            return null;
+        }
+        IntList ptr = A;
+        while (ptr.rest != null)
+        {
+            ptr = ptr.rest;
+        }
+        ptr.rest = B;
+        return A;
     }
 
     /**
@@ -91,7 +101,19 @@ public class IntList {
      */
     public static IntList catenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+        if(A == null)
+            return null;
+        IntList result = new IntList(A.first, null);
+        IntList ptr = A.rest;
+        IntList resultPtr = result;
+        while(ptr != null)
+        {
+            resultPtr.rest = new IntList(ptr.first, null);
+            ptr = ptr.rest;
+            resultPtr = resultPtr.rest;
+        }
+        resultPtr.rest = B;
+        return result;
     }
 
 
