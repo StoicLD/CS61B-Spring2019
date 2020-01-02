@@ -36,7 +36,6 @@ public class LinkedListDequeTest {
 	public static void addIsEmptySizeTest() {
 		System.out.println("Running add/isEmpty/Size test.");
 		System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-		/*
 		LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
 
 		boolean passed = checkEmpty(true, lld1.isEmpty());
@@ -58,7 +57,6 @@ public class LinkedListDequeTest {
 		lld1.printDeque();
 
 		printTestStatus(passed);
-		*/
 	}
 
 	/** Adds an item, then removes an item, and ensures that dll is empty afterwards. */
@@ -67,26 +65,96 @@ public class LinkedListDequeTest {
 		System.out.println("Running add/remove test.");
 
 		System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-		/*
 		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
-		// should be empty 
+		// should be empty
 		boolean passed = checkEmpty(true, lld1.isEmpty());
 
 		lld1.addFirst(10);
-		// should not be empty 
+		// should not be empty
 		passed = checkEmpty(false, lld1.isEmpty()) && passed;
 
 		lld1.removeFirst();
-		// should be empty 
+		// should be empty
 		passed = checkEmpty(true, lld1.isEmpty()) && passed;
 
 		printTestStatus(passed);
-		*/
+	}
+
+	public static void testGet()
+	{
+		System.out.println("Running get test.");
+		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+		lld1.addFirst(10);
+		lld1.addLast(20);
+		lld1.addLast(30);
+		int t0 = lld1.get(0);
+		int t1 = lld1.get(1);
+		int t2 = lld1.get(2);
+		if(t0 == 10)
+		{
+			System.out.println("index 0 is " + t0);
+			if(lld1.get(1) == 20)
+			{
+				System.out.println("index 1 is " + t1);
+				if(lld1.get(2) == 30)
+				{
+					System.out.println("index 2 is " + t2);
+					System.out.println("get Test passed!");
+				}
+				else {
+					System.out.println("wrong when using get method");
+				}
+			}
+			else {
+				System.out.println("wrong when using get method");
+			}
+		}
+		else
+		{
+			System.out.println("wrong when using get method");
+		}
+	}
+
+	public static void testGetRecursive()
+	{
+		System.out.println("Running get test.");
+		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+		lld1.addFirst(10);
+		lld1.addLast(20);
+		lld1.addLast(30);
+		int t0 = lld1.getRecursive(0);
+		int t1 = lld1.getRecursive(1);
+		int t2 = lld1.getRecursive(2);
+		if(t0 == 10)
+		{
+			System.out.println("index 0 is " + t0);
+			if(lld1.get(1) == 20)
+			{
+				System.out.println("index 1 is " + t1);
+				if(lld1.get(2) == 30)
+				{
+					System.out.println("index 2 is " + t2);
+					System.out.println("getRecursive Test passed!");
+				}
+				else {
+					System.out.println("wrong when using get method");
+				}
+			}
+			else {
+				System.out.println("wrong when using get method");
+			}
+		}
+		else
+		{
+			System.out.println("wrong when using get method");
+		}
 	}
 
 	public static void main(String[] args) {
 		System.out.println("Running tests.\n");
 		addIsEmptySizeTest();
+		testGet();
+		testGetRecursive();
 		addRemoveTest();
 	}
 } 
