@@ -150,11 +150,59 @@ public class LinkedListDequeTest {
 		}
 	}
 
+	public static void testPrintAndCopy()
+	{
+		LinkedListDeque<String> lls1 = new LinkedListDeque<>();
+		lls1.addLast("I ");
+		lls1.addLast("am ");
+		lls1.addLast("a ");
+		lls1.addLast("senior ");
+		lls1.addLast("undergraduate ");
+		lls1.addLast("student ");
+		lls1.printDeque();
+
+		LinkedListDeque<String> lls2 = new LinkedListDeque<>(lls1);
+		lls2.printDeque();
+		System.out.println("Passed print test and copy test");
+	}
+
+	public static void removeAndAddTest()
+	{
+		LinkedListDeque<String> lls1 = new LinkedListDeque<>();
+		lls1.addLast("I ");
+		lls1.addLast("am ");
+		lls1.addLast("a ");
+		lls1.addLast("senior ");
+		lls1.addLast("undergraduate ");
+		lls1.addLast("student ");
+		lls1.printDeque();
+		System.out.println("");
+
+		lls1.removeLast();
+		lls1.printDeque();
+		System.out.println("");
+
+		lls1.removeFirst();
+		lls1.printDeque();
+		System.out.println("");
+
+		lls1.removeFirst();
+		lls1.removeLast();
+
+		lls1.removeFirst();
+		lls1.removeLast();
+
+		if(lls1.isEmpty())
+			System.out.println("Passed the final add and remove test!");
+	}
+
 	public static void main(String[] args) {
 		System.out.println("Running tests.\n");
 		addIsEmptySizeTest();
 		testGet();
 		testGetRecursive();
 		addRemoveTest();
+		testPrintAndCopy();
+		removeAndAddTest();
 	}
 } 

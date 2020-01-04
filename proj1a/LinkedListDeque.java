@@ -1,3 +1,5 @@
+import sun.awt.image.ImageWatched;
+
 import javax.print.attribute.standard.MediaSize;
 
 public class LinkedListDeque<T>
@@ -28,12 +30,24 @@ public class LinkedListDeque<T>
     public LinkedListDeque()
     {
         sentinelNode = new Node(null, null, null);
+        sentinelNode.next = sentinelNode;
+        sentinelNode.prev = sentinelNode;
         size = 0;
     }
 
     public LinkedListDeque(LinkedListDeque other)
     {
-
+        this();
+        if(other.size != 0) {
+            Node ptr = other.sentinelNode.next;
+            // 注意！！！，千万不能用判断null！！！
+            // 因为这是一个循环链表！！！
+            while(ptr != other.sentinelNode)
+            {
+                addLast((T)ptr.item);
+                ptr = ptr.next;
+            }
+        }
     }
 
     public T get(int index)
@@ -121,7 +135,18 @@ public class LinkedListDeque<T>
 
     public void printDeque()
     {
-
+        if(!isEmpty()) {
+            Node ptr = sentinelNode.next;
+            int count = 0;
+            while(ptr != sentinelNode) {
+                System.out.println("Node " + count + " is " + ptr.item);
+                count++;
+                ptr = ptr.next;
+            }
+        }
+        else {
+            System.out.println("Deque is empty!");
+        }
     }
 
     public T removeFirst()
@@ -132,8 +157,8 @@ public class LinkedListDeque<T>
         else {
             Node first = sentinelNode.next;
             if(size == 1) {
-                sentinelNode.next = null;
-                sentinelNode.prev = null;
+                sentinelNode.next = sentinelNode;
+                sentinelNode.prev = sentinelNode;
             }
             else {
                 Node second = first.next;
@@ -153,8 +178,8 @@ public class LinkedListDeque<T>
         else {
             Node last = sentinelNode.prev;
             if(size == 1) {
-                sentinelNode.next = null;
-                sentinelNode.prev = null;
+                sentinelNode.next = sentinelNode;
+                sentinelNode.prev = sentinelNode;
             }
             else {
                 Node secondLast = last.prev;
