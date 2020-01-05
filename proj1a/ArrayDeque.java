@@ -22,9 +22,31 @@ public class ArrayDeque<T>
         capacity = 8;
     }
 
+    /**
+     * deep copy深拷贝复制ArrayDeque
+     * @param other
+     */
     public ArrayDeque(ArrayDeque other)
     {
+        items =(T[])new Object[other.capacity];
+        capacity = other.capacity;
+        headIndex = other.headIndex;
+        tailIndex = other.tailIndex;
+        size = other.size;
+        criticalValue = other.criticalValue;
+        System.arraycopy(other.items, 0, items, 0, items.length);
+    }
 
+    public int getCapacity()
+    {
+        return capacity;
+    }
+
+    public T[] getItems()
+    {
+        T[] newItems = (T[])new Object[capacity];
+        System.arraycopy(items, 0, newItems, 0, capacity);
+        return newItems;
     }
 
     public T get(int index)

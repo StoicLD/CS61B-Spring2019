@@ -108,7 +108,7 @@ public class ArrayDequeTest
             ald1.addLast(i);
         }
         ald1.printDeque();
-        System.out.println("按顺序输出，应该正常扩容");
+        System.out.println("添加40个数字，正常扩容");
 
         for(int i = 0; i < 25; i++)
         {
@@ -142,12 +142,72 @@ public class ArrayDequeTest
         System.out.println("按顺序输出，应该正常缩容");
     }
 
+    public static void addRemoveTest3()
+    {
+        System.out.println("开始添加删减综合测试3");
+        ArrayDeque<Integer> ald1 = new ArrayDeque<>();
+        for(int i = 0; i < 50; i++)
+        {
+            ald1.addLast(i);
+        }
+
+        for(int i = 0; i< 50; i++)
+        {
+            ald1.addFirst(-i - 1);
+        }
+        ald1.printDeque();
+        System.out.println("应当是按照顺序输出 " + "\n");
+
+        for(int i = 0; i < 68; i++)
+        {
+            if(i % 2 == 0) {
+                ald1.removeFirst();
+            }
+            else {
+                ald1.removeLast();
+            }
+        }
+        ald1.printDeque();
+        System.out.println("应该是按照顺序输出，且没有缩容 " + "capacity = " + ald1.getCapacity());
+
+        for(int i = 0; i < 10; i++)
+        {
+            ald1.removeFirst();
+        }
+        ald1.printDeque();
+
+        System.out.println("应该是按照顺序输出，且有缩容 " + "capacity = " + ald1.getCapacity());
+    }
+
+    public static void copyAndAddTest()
+    {
+        System.out.println("开始拷贝测试");
+        ArrayDeque<Integer> ald1 = new ArrayDeque<>();
+        for(int i = 0; i < 50; i++)
+        {
+            ald1.addFirst(-i - 1);
+        }
+        for(int j = 0; j < 50;j++)
+        {
+            ald1.addLast(j);
+        }
+        ald1.printDeque();
+
+        ArrayDeque<Integer> ald2 = new ArrayDeque<>(ald1);
+
+        ald2.printDeque();
+        System.out.println("ald1与ald2输出如果一致，则正确");
+        System.out.println("");
+    }
 
     public static void main(String[] args)
     {
-        //addIsEmptySizeTest();
-        //addTest1();
-        //addRemoveTest1();
-        addRemoveTest2();
+//        addIsEmptySizeTest();
+//        addTest1();
+//        addRemoveTest1();
+//        addRemoveTest2();
+//        copyAndAddTest();
+
+        addRemoveTest3();
     }
 }
