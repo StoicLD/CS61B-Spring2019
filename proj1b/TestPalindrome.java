@@ -48,5 +48,19 @@ public class TestPalindrome {
         assertFalse(palindrome.isPalindromeRecursive("aaaaaddddccaaaa"));
     }
 
+    @Test
+    public void testOffByOnePaIsPalindrome()
+    {
+        OffByOne offByOne = new OffByOne();
+
+        assertTrue(palindrome.isPalindrome("adcb", offByOne));
+        assertTrue(palindrome.isPalindrome("adscb", offByOne));
+        assertTrue(palindrome.isPalindrome("a", offByOne));
+        assertTrue(palindrome.isPalindrome("", offByOne));
+
+        assertFalse(palindrome.isPalindrome("adcbe", offByOne));
+        assertFalse(palindrome.isPalindrome("em13nf", offByOne));
+    }
+
 }
 //Uncomment this class once you've created your Palindrome class.

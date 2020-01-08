@@ -56,4 +56,19 @@ public class Palindrome
             return false;
         }
     }
+
+    public boolean isPalindrome(String word, CharacterComparator cc)
+    {
+        LinkedListDeque<Character> lld = (LinkedListDeque<Character>) wordToDeque(word);
+        if(lld.size() <= 1)
+            return true;
+        while(lld.size() > 1)
+        {
+            Character firstC = lld.removeFirst();
+            Character lastC = lld.removeLast();
+            if(!cc.equalChars(firstC, lastC))
+                return false;
+        }
+        return true;
+    }
 }
