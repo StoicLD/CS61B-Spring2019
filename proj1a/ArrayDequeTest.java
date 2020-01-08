@@ -207,7 +207,8 @@ public class ArrayDequeTest
 //        addRemoveTest1();
 //        addRemoveTest2();
 //        copyAndAddTest();
-
+        Integer ss1 = (Integer) new Object();
+        Object ss2 = (Object) new Integer(1);
         addRemoveTest3();
     }
 }

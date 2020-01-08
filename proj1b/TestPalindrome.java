@@ -1,4 +1,4 @@
-/*import org.junit.Test;
+import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class TestPalindrome {
@@ -15,4 +15,38 @@ public class TestPalindrome {
         }
         assertEquals("persiflage", actual);
     }
-}     Uncomment this class once you've created your Palindrome class. */
+
+    @Test
+    public void testIsPalindrome() {
+        assertTrue(palindrome.isPalindrome(""));
+        assertTrue(palindrome.isPalindrome("a"));
+        assertTrue(palindrome.isPalindrome("abba"));
+        assertTrue(palindrome.isPalindrome("raccar"));
+        assertTrue(palindrome.isPalindrome("bBbBb"));
+    }
+
+    @Test
+    public void testNotPalindrome() {
+        assertFalse(palindrome.isPalindrome("Dd"));
+        assertFalse(palindrome.isPalindrome("aAaa"));
+        assertFalse(palindrome.isPalindrome("aaaaaddddccaaaa"));
+    }
+
+    @Test
+    public void testIsPalindromeRecursive() {
+        assertTrue(palindrome.isPalindromeRecursive(""));
+        assertTrue(palindrome.isPalindromeRecursive("a"));
+        assertTrue(palindrome.isPalindromeRecursive("abba"));
+        assertTrue(palindrome.isPalindromeRecursive("raccar"));
+        assertTrue(palindrome.isPalindromeRecursive("bBbBb"));
+    }
+
+    @Test
+    public void testNotPalindromeRecursive() {
+        assertFalse(palindrome.isPalindromeRecursive("Dd"));
+        assertFalse(palindrome.isPalindromeRecursive("aAaa"));
+        assertFalse(palindrome.isPalindromeRecursive("aaaaaddddccaaaa"));
+    }
+
+}
+//Uncomment this class once you've created your Palindrome class.
