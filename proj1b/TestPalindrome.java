@@ -49,7 +49,7 @@ public class TestPalindrome {
     }
 
     @Test
-    public void testOffByOnePaIsPalindrome()
+    public void testOffByOneIsPalindrome()
     {
         OffByOne offByOne = new OffByOne();
 
@@ -62,5 +62,12 @@ public class TestPalindrome {
         assertFalse(palindrome.isPalindrome("em13nf", offByOne));
     }
 
+    @Test
+    public void testOffByNIsPalindrome()
+    {
+        OffByN offByN = new OffByN(4);
+        assertTrue(palindrome.isPalindrome("a1r5e", offByN));
+        assertTrue(palindrome.isPalindrome("e51a", offByN));
+    }
 }
 //Uncomment this class once you've created your Palindrome class.
