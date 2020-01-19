@@ -6,9 +6,7 @@ import huglife.Action;
 import huglife.Occupant;
 
 import java.awt.Color;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Map;
+import java.util.*;
 
 /**
  * An implementation of a motile pacifist photosynthesizer.
@@ -29,6 +27,13 @@ public class Plip extends Creature {
      * blue color.
      */
     private int b;
+
+    /**
+     * Magic Number added
+     */
+    public static final double MOVE_POINT = 0.15;
+    public static final double STAY_POINT = 0.20;
+    public static final double MAX_POINT = 2;
 
     /**
      * creates plip with energy equal to E.
@@ -57,7 +62,10 @@ public class Plip extends Creature {
      * that you get this exactly correct.
      */
     public Color color() {
-        g = 63;
+        //g = 63;
+        r = 99;
+        g = (int) (energy * 96) + 63;
+        b = 76;
         return color(r, g, b);
     }
 
@@ -75,6 +83,8 @@ public class Plip extends Creature {
      */
     public void move() {
         // TODO
+        if(energy >= MOVE_POINT)
+            energy -= MOVE_POINT;
     }
 
 
@@ -83,6 +93,9 @@ public class Plip extends Creature {
      */
     public void stay() {
         // TODO
+        energy += STAY_POINT;
+        if(energy > MAX_POINT)
+            energy = MAX_POINT;
     }
 
     /**
@@ -91,7 +104,8 @@ public class Plip extends Creature {
      * Plip.
      */
     public Plip replicate() {
-        return this;
+        energy /= 2;
+        return new Plip(energy);
     }
 
     /**
@@ -111,20 +125,75 @@ public class Plip extends Creature {
         // Rule 1
         Deque<Direction> emptyNeighbors = new ArrayDeque<>();
         boolean anyClorus = false;
+        boolean hasEmpty = false;
+
         // TODO
         // (Google: Enhanced for-loop over keys of NEIGHBORS?)
-        // for () {...}
+        for (Direction key : neighbors.keySet())
+        {
+            if(neighbors.get(key).name().equals("empty"))
+            {
+                emptyNeighbors.add(key);
+                hasEmpty = true;
+            }
+            else if(neighbors.get(key).name().equals("clorus"))
+            {
+                anyClorus = true;
+            }
+        }
 
-        if (false) { // FIXME
+        if (!hasEmpty) { // FIXME
             // TODO
+            stay();
+            return new Action(Action.ActionType.STAY);
         }
 
         // Rule 2
         // HINT: randomEntry(emptyNeighbors)
-
+        else if(energy >= 1)
+        {
+            int index = (int)(Math.random() * emptyNeighbors.size());
+            int count = 0;
+            Direction finalDirection = emptyNeighbors.getFirst();
+            for (Direction dir : emptyNeighbors)
+            {
+                if(count == index) {
+                    finalDirection = dir;
+                    break;
+                }
+                count++;
+            }
+            replicate();
+            return new Action(Action.ActionType.REPLICATE, finalDirection);
+        }
         // Rule 3
+        else if(anyClorus)
+        {
+            int index = (int)(Math.random() * emptyNeighbors.size());
+            int count = 0;
+            Direction finalDirection = emptyNeighbors.getFirst();
+            for (Direction dir : emptyNeighbors)
+            {
+                if(count == index) {
+                    finalDirection = dir;
+                    break;
+                }
+                count++;
+            }
+            int runOrStay = (int)(Math.random() * 2);
+            if(runOrStay == 0) {
+                move();
+                return new Action(Action.ActionType.MOVE, finalDirection);
+            }
+            else {
+                stay();
+                return new Action(Action.ActionType.STAY);
+            }
+        }
+
 
         // Rule 4
+        stay();
         return new Action(Action.ActionType.STAY);
     }
 }

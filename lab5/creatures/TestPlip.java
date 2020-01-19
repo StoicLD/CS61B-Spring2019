@@ -1,6 +1,8 @@
 package creatures;
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import java.awt.font.NumericShaper;
 import java.util.HashMap;
 import java.awt.Color;
 import huglife.Direction;
@@ -8,6 +10,7 @@ import huglife.Action;
 import huglife.Occupant;
 import huglife.Impassible;
 import huglife.Empty;
+import org.w3c.dom.ranges.Range;
 
 /** Tests the plip class
  *  @authr FIXME
@@ -33,9 +36,18 @@ public class TestPlip {
     @Test
     public void testReplicate() {
         // TODO
+        Plip p = new Plip(2);
+        double originEnergy = p.energy();
+        assertEquals(2, p.energy(), 0.01);
+
+        Plip p2 = p.replicate();
+        assertEquals(originEnergy, p.energy() * 2, 0.01);
+        assertEquals(p.energy(), p2.energy(), 0.01);
+
+        assertNotEquals(p, p2);
     }
 
-    //@Test
+    @Test
     public void testChoose() {
 
         // No empty adjacent spaces; stay.
@@ -99,5 +111,28 @@ public class TestPlip {
 
 
         // We don't have Cloruses yet, so we can't test behavior for when they are nearby right now.
+
+
+        HashMap<Direction, Occupant> enemy = new HashMap<Direction, Occupant>();
+        enemy.put(Direction.TOP, new Clorus());
+        enemy.put(Direction.BOTTOM, new Empty());
+        enemy.put(Direction.LEFT, new Clorus());
+        enemy.put(Direction.RIGHT, new Empty());
+        int run = 0;
+        int stay = 0;
+        int count = 10000;
+        while((count--) >= 0)
+        {
+            p = new Plip(0.6);
+            Action result = p.chooseAction(enemy);
+            if(result.type.equals(Action.ActionType.STAY)) {
+                stay++;
+            }
+            else if(result.type.equals(Action.ActionType.MOVE)) {
+                run++;
+            }
+        }
+        System.out.println("run = " + run);
+        System.out.println("stay = " + stay);
     }
 }
