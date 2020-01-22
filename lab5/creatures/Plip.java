@@ -4,7 +4,7 @@ import huglife.Creature;
 import huglife.Direction;
 import huglife.Action;
 import huglife.Occupant;
-
+import static huglife.HugLifeUtils.randomEntry;
 import java.awt.Color;
 import java.util.*;
 
@@ -126,7 +126,6 @@ public class Plip extends Creature {
         Deque<Direction> emptyNeighbors = new ArrayDeque<>();
         boolean anyClorus = false;
         boolean hasEmpty = false;
-
         // TODO
         // (Google: Enhanced for-loop over keys of NEIGHBORS?)
         for (Direction key : neighbors.keySet())
