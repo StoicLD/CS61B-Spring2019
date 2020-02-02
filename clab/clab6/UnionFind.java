@@ -32,10 +32,10 @@ public class UnionFind {
         return false;
     }
 
-    /* Connects two elements v1 and v2 together. v1 and v2 can be any valid 
+    /* Connects two elements v1 and v2 together. v1 and v2 can be any valid
        elements, and a union-by-size heuristic is used. If the sizes of the sets
-       are equal, tie break by connecting v1's root to v2's root. Unioning a 
-       vertex with itself or vertices that are already connected should not 
+       are equal, tie break by connecting v1's root to v2's root. Unioning a
+       vertex with itself or vertices that are already connected should not
        change the sets but may alter the internal structure of the data. */
     public void union(int v1, int v2) {
         // TODO

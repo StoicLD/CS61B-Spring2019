@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class BubbleGrid {
     private int[][] grid;
 
@@ -14,6 +15,11 @@ public class BubbleGrid {
      * and have no side-effects to grid. */
     public int[] popBubbles(int[][] darts) {
         // TODO
+        // 不能对grid数组造成破坏
+        if(grid.length == 0 || grid[0].length == 0 || grid[0].length != grid.length)
+            return null;
+        WeightedQuickUnionUF union = new WeightedQuickUnionUF(grid.length * grid[0].length);
+
         return null;
     }
 }
