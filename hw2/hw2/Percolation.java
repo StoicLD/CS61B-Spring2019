@@ -7,6 +7,7 @@ import java.util.Arrays;
 //Full site is also an Open site
 public class Percolation {
     private WeightedQuickUnionUF siteUnion;
+    private WeightedQuickUnionUF topOnlySiteUnion;
     //只有block和open两种状态，full只要看是否与virtual top point连接就可以了
     private Status[] siteStatus;
     private int gridSize;
@@ -24,6 +25,7 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
         siteUnion = new WeightedQuickUnionUF(N * N + 2);
+        topOnlySiteUnion = new WeightedQuickUnionUF(N * N + 2);
         siteStatus = new Status[N * N + 2];
         gridSize = N;
 
@@ -54,6 +56,7 @@ public class Percolation {
             if (isOpen(otherIndex)) {
                 // 只要union了就完事了
                 siteUnion.union(otherIndex, originIndex);
+                topOnlySiteUnion.union(otherIndex, originIndex);
             }
         }
     }
@@ -64,15 +67,29 @@ public class Percolation {
         if(row < 0 || col < 0 || row >= gridSize || col >= gridSize ) {
             throw new IndexOutOfBoundsException();
         }
-        int index = xyToIndex(row, col);
         if(isOpen(row, col)) {
             return;
         }
-
+        int index = xyToIndex(row, col);
         siteStatus[index] = Status.open;
         //最上面一排
         if(row == 0) {
             siteUnion.union(index, topVirtualIndex);
+            topOnlySiteUnion.union(index, topVirtualIndex);
+        }
+        //最后一排
+        else if(row == gridSize - 1) {
+            // 另外一个unionFind结构不union，这样就可以排除倒灌现象发生
+            // 倒灌现象就是如果整个系统已经连通了，由于最底下一排与虚拟底部节点连通
+            // 导致某些不该percolate的底部节点也变成full了，比如下面的(3, 3)这个节点
+            /*     top
+            *    x o x x
+            *    o o x o
+            *    x o x x
+            *    x o x o
+            *      bottom
+            */
+            siteUnion.union(index, bottomVirtualIndex);
         }
 
         int topIndex = xyToIndex(row - 1, col);
@@ -84,15 +101,6 @@ public class Percolation {
         changeStatus(index, bottomIndex);
         changeStatus(index, rightIndex);
         changeStatus(index, leftIndex);
-        //最下面一排，问题在于如何防止倒灌？
-        if(row == gridSize - 1) {
-            if(siteUnion.connected(index, topVirtualIndex)) {
-                //表明上下连通了
-                isPercolate = true;
-            }
-            siteUnion.union(index, bottomVirtualIndex);
-        }
-
         openSiteNumber++;
     }
 
@@ -124,7 +132,7 @@ public class Percolation {
     public boolean isFull(int index)
     {
         if(checkIndex(index)) {
-            return (siteStatus[index] == Status.open) && siteUnion.connected(index, topVirtualIndex);
+            return (siteStatus[index] == Status.open) && topOnlySiteUnion.connected(index, topVirtualIndex);
         }
         else {
             throw new IllegalArgumentException();
@@ -139,7 +147,7 @@ public class Percolation {
     // does the system percolate?
     public boolean percolates()
     {
-        return isPercolate;
+        return siteUnion.connected(topVirtualIndex, bottomVirtualIndex);
     }
 
     // use for unit testing (not required, but keep this here for the autograder)
