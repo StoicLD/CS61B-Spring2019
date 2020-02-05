@@ -48,6 +48,12 @@ public class Percolation {
         return index >= 0 && index <= gridSize * gridSize - 1;
     }
 
+    public boolean checkRowAndCol(int row, int col)
+    {
+        return row >= 0 && row < gridSize && col < gridSize && col >= 0;
+    }
+
+
     //四周如果有open的就Union起来
     public void changeStatus(int originIndex, int otherIndex)
     {
@@ -59,6 +65,13 @@ public class Percolation {
                 topOnlySiteUnion.union(otherIndex, originIndex);
             }
         }
+    }
+
+    public void open(int index)
+    {
+        int row = index / gridSize;
+        int col = index - (row * gridSize);
+        open(row, col);
     }
 
     // open the site (row, col) if it is not open already
@@ -96,11 +109,42 @@ public class Percolation {
         int bottomIndex = xyToIndex(row + 1, col);
         int rightIndex = xyToIndex(row, col + 1);
         int leftIndex = xyToIndex(row, col - 1);
+        if(checkRowAndCol(row - 1, col)) {
+            if(isOpen(topIndex)) {
+                siteUnion.union(index, topIndex);
+                topOnlySiteUnion.union(index, topIndex);
+            }
+        }
+        if(checkRowAndCol(row + 1, col)) {
+            if(isOpen(bottomIndex)) {
+                siteUnion.union(index, bottomIndex);
+                topOnlySiteUnion.union(index, bottomIndex);
+            }
+        }
+        if(checkRowAndCol(row, col + 1)) {
+            if(isOpen(rightIndex)) {
+                siteUnion.union(index, rightIndex);
+                topOnlySiteUnion.union(index, rightIndex);
+            }
+        }
+        if(checkRowAndCol(row, col - 1)) {
+            if(isOpen(leftIndex)) {
+                siteUnion.union(index, leftIndex);
+                topOnlySiteUnion.union(index, leftIndex);
+            }
+        }
+
+    /*
+        int topIndex = xyToIndex(row - 1, col);
+        int bottomIndex = xyToIndex(row + 1, col);
+        int rightIndex = xyToIndex(row, col + 1);
+        int leftIndex = xyToIndex(row, col - 1);
 
         changeStatus(index, topIndex);
         changeStatus(index, bottomIndex);
         changeStatus(index, rightIndex);
         changeStatus(index, leftIndex);
+    */
         openSiteNumber++;
     }
 
