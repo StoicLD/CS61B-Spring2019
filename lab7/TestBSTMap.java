@@ -1,4 +1,6 @@
 import static org.junit.Assert.*;
+
+import jdk.nashorn.internal.ir.IdentNode;
 import org.junit.Test;
 
 /** Tests by Brendan Hu, Spring 2015, revised for 2016 by Josh Hug */
@@ -75,6 +77,15 @@ public class TestBSTMap {
     	BSTMap<String, Integer> b = new BSTMap<String, Integer>();
         b.put("hi", 1);
         assertTrue(b.containsKey("hi") && b.get("hi") != null);
+    }
+
+    @Test
+    public void sanityPrintTest() {
+        BSTMap<Integer, Integer> b = new BSTMap<Integer, Integer>();
+        for (int i = 0; i < 455; i++) {
+            b.put(i, i);
+        }
+        b.printInOrder();
     }
 
     public static void main(String[] args) {
