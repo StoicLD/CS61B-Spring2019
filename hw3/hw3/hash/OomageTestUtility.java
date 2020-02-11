@@ -1,5 +1,6 @@
 package hw3.hash;
 
+import javax.swing.text.StyledEditorKit;
 import java.util.List;
 
 public class OomageTestUtility {
@@ -12,6 +13,20 @@ public class OomageTestUtility {
          * and ensure that no bucket has fewer than N / 50
          * Oomages and no bucket has more than N / 2.5 Oomages.
          */
-        return false;
+
+        int[] buckets = new int[M];
+        for (Oomage o : oomages) {
+            int bucketNum = (o.hashCode() & 0x7FFFFFFF) % M;
+            buckets[bucketNum]++;
+        }
+
+        int maxBound = oomages.size() * 2 / 5;
+        int minBound = oomages.size() / 50;
+        for(int i : buckets) {
+            if(i > maxBound || i < minBound) {
+                return false;
+            }
+        }
+        return true;
     }
 }
