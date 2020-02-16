@@ -117,26 +117,26 @@ public class TestMyHashMap {
         MyHashMap<String, Integer> studentIDs = new MyHashMap<String, Integer>();
         studentIDs.put("sarah", 12345);
         assertEquals(1, studentIDs.size());
-        assertEquals(12345, studentIDs.get("sarah").intValue());
+        assertEquals(12345, ((Integer)studentIDs.get("sarah")).intValue());
         studentIDs.put("alan", 345);
         assertEquals(2, studentIDs.size());
-        assertEquals(12345, studentIDs.get("sarah").intValue());
-        assertEquals(345, studentIDs.get("alan").intValue());
+        assertEquals(12345, ((Integer)studentIDs.get("sarah")).intValue());
+        assertEquals(345, ((Integer)studentIDs.get("alan")).intValue());
         studentIDs.put("alan", 345);
         assertEquals(2, studentIDs.size());
-        assertEquals(12345, studentIDs.get("sarah").intValue());
-        assertEquals(345, studentIDs.get("alan").intValue());
+        assertEquals(12345, ((Integer)studentIDs.get("sarah")).intValue());
+        assertEquals(345, ((Integer)studentIDs.get("alan")).intValue());
         studentIDs.put("alan", 345);
         assertEquals(2, studentIDs.size());
-        assertEquals(12345, studentIDs.get("sarah").intValue());
-        assertEquals(345, studentIDs.get("alan").intValue());
+        assertEquals(12345, ((Integer)studentIDs.get("sarah")).intValue());
+        assertEquals(345, ((Integer)studentIDs.get("alan")).intValue());
         assertTrue(studentIDs.containsKey("sarah"));
         assertTrue(studentIDs.containsKey("alan"));
 
         // handle values being the same
-        assertEquals(345, studentIDs.get("alan").intValue());
+        assertEquals(345, ((Integer)studentIDs.get("alan")).intValue());
         studentIDs.put("evil alan", 345);
-        assertEquals(345, studentIDs.get("evil alan").intValue());
+        assertEquals(345, ((Integer)studentIDs.get("evil alan")).intValue());
         assertEquals(studentIDs.get("evil alan"), studentIDs.get("alan"));
     }
 
