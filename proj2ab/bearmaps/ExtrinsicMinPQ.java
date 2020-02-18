@@ -5,6 +5,9 @@ package bearmaps;
  * and can be changed using the changePriority method.
  */
 public interface ExtrinsicMinPQ<T> {
+    //也就是加入一个新元素时候是手动给一个优先级的value的，而不是依靠这个element的特性来
+    //比较的
+
     /* Adds an item with the given priority value. Throws an
      * IllegalArgumentExceptionb if item is already present.
      * You may assume that item is never null. */
