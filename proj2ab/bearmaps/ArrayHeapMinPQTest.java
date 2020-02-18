@@ -115,6 +115,48 @@ public class ArrayHeapMinPQTest {
         assertEquals((Integer)1, ahm.removeSmallest());
     }
 
+    @Test
+    public void removeTest4()
+    {
+        ArrayHeapMinPQ<Integer> ahm = new ArrayHeapMinPQ<>();
+        ahm.add(2, 2);
+        ahm.add(3, 3);
+        ahm.add(7, 7);
+        ahm.add(10, 10);
+        ahm.add(21, 21);
+        ahm.add(9, 9);
+        ahm.add(18, 18);
+        ahm.add(25, 25);
+        PrintHeapDemo.printFancyHeapDrawing(ahm.heapArray());
+
+        assertEquals((Integer) 2, ahm.removeSmallest());
+        assertEquals((Integer) 3, ahm.removeSmallest());
+        assertEquals((Integer) 7, ahm.removeSmallest());
+        assertEquals((Integer) 9, ahm.removeSmallest());
+        assertEquals((Integer) 10, ahm.removeSmallest());
+        assertEquals((Integer) 18, ahm.removeSmallest());
+        assertEquals((Integer) 21, ahm.removeSmallest());
+        assertEquals((Integer) 25, ahm.removeSmallest());
+
+    }
+
+    @Test
+    public void mapDataTest1()
+    {
+        ArrayHeapMinPQ<Integer> ahm = new ArrayHeapMinPQ<>();
+        ahm.add(5,5);
+        ahm.add(1,1);
+        ahm.add(11,11);
+        ahm.add(3,3);
+        ahm.checkMapIndex();
+
+        ahm.removeSmallest();
+        ahm.checkMapIndex();
+
+        ahm.removeSmallest();
+        ahm.checkMapIndex();
+    }
+
     public static void main(String args[])
     {
         jh61b.junit.TestRunner.runTests(ArrayHeapMinPQTest.class);

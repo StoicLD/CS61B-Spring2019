@@ -1,6 +1,5 @@
 package bearmaps;
 
-import javax.naming.NameNotFoundException;
 import java.util.*;
 
 public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
@@ -8,7 +7,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
     //多开一个大小，留空一个位置（index为0的位置）
     //所以最小元素在index = 1的位置上
     private ArrayList<Node> innerMinPQ;
-    private HashSet<T> innerSet;  //用来快速查找是否存在该元素
+    private HashMap<T, Integer> innerTable;  //用来快速查找是否存在该元素
 
 
     private class Node implements Comparable<Node>
@@ -63,7 +62,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
     {
         innerMinPQ = new ArrayList<>();
         innerMinPQ.add(new Node(null, 0));
-        innerSet = new HashSet<>();
+        innerTable = new HashMap<>();
     }
 
     private int getParentIndex(int index)
@@ -93,9 +92,35 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
         }
         else {
             Node temp = innerMinPQ.get(index1);
+            innerTable.put(innerMinPQ.get(index1).item, index2);
+            innerTable.put(innerMinPQ.get(index2).item, index1);
+
             innerMinPQ.set(index1, innerMinPQ.get(index2));
             innerMinPQ.set(index2, temp);
         }
+    }
+
+    public Object[] heapArray()
+    {
+        T[] heap = (T[])(new Object[size()]);
+        for(int i = 1; i < heap.length; i++)
+        {
+            heap[i] = innerMinPQ.get(i).item;
+        }
+        return heap;
+    }
+
+    public boolean checkMapIndex()
+    {
+        for(int i = 1; i < innerMinPQ.size(); i++)
+        {
+            T item = innerMinPQ.get(i).item;
+            if(!innerTable.containsKey(item) && innerTable.get(item) != i)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -114,7 +139,8 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
             //最小堆的插入
             Node newNode = new Node(item, priority);
             innerMinPQ.add(newNode);
-            innerSet.add(item);
+            //只能假设这是个O(1)操作，可以的，只要平均是O(logN)就可以了
+            innerTable.put(item, getLastIndex());
             int currIndex = innerMinPQ.size() - 1;
             int parentIndex = getParentIndex(innerMinPQ.size() - 1);
             while (parentIndex > 0)
@@ -122,8 +148,9 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
                 Node parentNode = innerMinPQ.get(parentIndex);
                 Node currNode = innerMinPQ.get(currIndex);
                 if (parentNode.compareTo(currNode) > 0) {
-                    innerMinPQ.set(currIndex, parentNode);
-                    innerMinPQ.set(parentIndex, currNode);
+                    //innerMinPQ.set(currIndex, parentNode);
+                    //innerMinPQ.set(parentIndex, currNode);
+                    swapNode(currIndex, parentIndex);
                     currIndex = parentIndex;
                     parentIndex = getParentIndex(parentIndex);
 
@@ -144,7 +171,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
     @Override
     public boolean contains(T item)
     {
-        return innerSet.contains(item);
+        return innerTable.containsKey(item);
     }
 
     @Override
@@ -186,14 +213,14 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
                 currIndex = nextIndex;
             }
             Node removed = innerMinPQ.remove(getLastIndex());
-            innerSet.remove(removed.item);
+            innerTable.remove(removed.item);
             return removed.item;
         }
     }
 
     /**
      * innerMinPQ的多一个虚拟的头节点，所以返回大小要减去1
-     * @return
+     * @return 大小
      */
     @Override
     public int size()
