@@ -157,6 +157,52 @@ public class ArrayHeapMinPQTest {
         ahm.checkMapIndex();
     }
 
+    @Test
+    public void changePriorityTest1()
+    {
+        ArrayHeapMinPQ<Integer> ahm = new ArrayHeapMinPQ<>();
+        ahm.add(2,2);
+        ahm.add(3,3);
+        ahm.add(7,7);
+        ahm.add(11,11);
+        ahm.add(21,21);
+        ahm.add(9,18);
+        ahm.add(25,25);
+        ahm.changePriority(21, 1);
+        assertEquals((Integer)21, ahm.getSmallest());
+        PrintHeapDemo.printFancyHeapDrawing(ahm.heapArray());
+    }
+
+    @Test
+    public void changePriorityTest2()
+    {
+        ArrayHeapMinPQ<Integer> ahm = new ArrayHeapMinPQ<>();
+        ahm.add(2,2);
+        ahm.add(4,4);
+        ahm.add(7,7);
+        ahm.add(11,11);
+        ahm.add(22,22);
+        ahm.add(9,9);
+        ahm.add(35,35);
+        ahm.add(45,45);
+
+        PrintHeapDemo.printFancyHeapDrawing(ahm.heapArray());
+
+
+        ahm.changePriority(2, 3);
+        assertEquals((Integer)2, ahm.getSmallest());
+        PrintHeapDemo.printFancyHeapDrawing(ahm.heapArray());
+
+        ahm.changePriority(4, 30);
+        PrintHeapDemo.printFancyHeapDrawing(ahm.heapArray());
+
+        ahm.changePriority(7, 10);
+        PrintHeapDemo.printFancyHeapDrawing(ahm.heapArray());
+
+        ahm.changePriority(2, 36);
+        PrintHeapDemo.printFancyHeapDrawing(ahm.heapArray());
+    }
+
     public static void main(String args[])
     {
         jh61b.junit.TestRunner.runTests(ArrayHeapMinPQTest.class);

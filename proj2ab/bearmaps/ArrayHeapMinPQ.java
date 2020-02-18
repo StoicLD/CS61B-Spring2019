@@ -1,5 +1,6 @@
 package bearmaps;
 
+import java.awt.geom.CubicCurve2D;
 import java.util.*;
 
 public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
@@ -15,26 +16,32 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
         private T item;
         private double priority;
 
-        Node(T e, double p) {
+        Node(T e, double p)
+        {
             this.item = e;
             this.priority = p;
         }
 
-        T getItem() {
+        T getItem()
+        {
             return item;
         }
 
-        double getPriority() {
+        double getPriority()
+        {
             return priority;
         }
 
-        void setPriority(double priority) {
+        void setPriority(double priority)
+        {
             this.priority = priority;
         }
 
         @Override
-        public int compareTo(Node other) {
-            if (other == null) {
+        public int compareTo(Node other)
+        {
+            if (other == null)
+            {
                 return -1;
             }
             return Double.compare(this.getPriority(), other.getPriority());
@@ -42,17 +49,21 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
 
         @Override
         @SuppressWarnings("unchecked")
-        public boolean equals(Object o) {
-            if (o == null || o.getClass() != this.getClass()) {
+        public boolean equals(Object o)
+        {
+            if (o == null || o.getClass() != this.getClass())
+            {
                 return false;
             }
-            else {
+            else
+            {
                 return ((Node) o).getItem().equals(getItem());
             }
         }
 
         @Override
-        public int hashCode() {
+        public int hashCode()
+        {
             return item.hashCode();
         }
     }
@@ -87,10 +98,12 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
 
     private void swapNode(int index1, int index2)
     {
-        if(index1 <= 0 || index1 > getLastIndex() || index2 <= 0 || index2 > getLastIndex()) {
+        if (index1 <= 0 || index1 > getLastIndex() || index2 <= 0 || index2 > getLastIndex())
+        {
             throw new IndexOutOfBoundsException();
         }
-        else {
+        else
+        {
             Node temp = innerMinPQ.get(index1);
             innerTable.put(innerMinPQ.get(index1).item, index2);
             innerTable.put(innerMinPQ.get(index2).item, index1);
@@ -102,8 +115,8 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
 
     public Object[] heapArray()
     {
-        T[] heap = (T[])(new Object[size()]);
-        for(int i = 1; i < heap.length; i++)
+        T[] heap = (T[]) (new Object[size()]);
+        for (int i = 1; i < heap.length; i++)
         {
             heap[i] = innerMinPQ.get(i).item;
         }
@@ -112,10 +125,10 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
 
     public boolean checkMapIndex()
     {
-        for(int i = 1; i < innerMinPQ.size(); i++)
+        for (int i = 1; i < innerMinPQ.size(); i++)
         {
             T item = innerMinPQ.get(i).item;
-            if(!innerTable.containsKey(item) && innerTable.get(item) != i)
+            if (!innerTable.containsKey(item) && innerTable.get(item) != i)
             {
                 return false;
             }
@@ -132,10 +145,12 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
     @Override
     public void add(T item, double priority)
     {
-        if (contains(item)) {
+        if (contains(item))
+        {
             throw new IllegalArgumentException();
         }
-        else {
+        else
+        {
             //最小堆的插入
             Node newNode = new Node(item, priority);
             innerMinPQ.add(newNode);
@@ -147,7 +162,8 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
             {
                 Node parentNode = innerMinPQ.get(parentIndex);
                 Node currNode = innerMinPQ.get(currIndex);
-                if (parentNode.compareTo(currNode) > 0) {
+                if (parentNode.compareTo(currNode) > 0)
+                {
                     //innerMinPQ.set(currIndex, parentNode);
                     //innerMinPQ.set(parentIndex, currNode);
                     swapNode(currIndex, parentIndex);
@@ -155,7 +171,8 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
                     parentIndex = getParentIndex(parentIndex);
 
                 }
-                else {
+                else
+                {
                     break;
                 }
             }
@@ -177,7 +194,8 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
     @Override
     public T getSmallest()
     {
-        if (size() <= 0) {
+        if (size() <= 0)
+        {
             throw new NoSuchElementException();
         }
 
@@ -187,31 +205,15 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
     @Override
     public T removeSmallest()
     {
-        if (getLastIndex() < 1) {
+        if (getLastIndex() < 1)
+        {
             throw new NoSuchElementException();
         }
-        else {
+        else
+        {
             swapNode(1, getLastIndex());
             int currIndex = 1;
-            int nextIndex = 1;
-            while(currIndex < getLastIndex() - 1)
-            {
-                int leftIndex = getLeftChildIndex(currIndex);
-                int rightIndex = getRightChildIndex(currIndex);
-                if (leftIndex < getLastIndex() && innerMinPQ.get(currIndex).compareTo(innerMinPQ.get(leftIndex)) > 0)
-                {
-                    nextIndex = leftIndex;
-                }
-                if (rightIndex < getLastIndex() && innerMinPQ.get(nextIndex).compareTo(innerMinPQ.get(rightIndex)) > 0)
-                {
-                    nextIndex = rightIndex;
-                }
-                if(currIndex == nextIndex || nextIndex >= getLastIndex()) {
-                    break;
-                }
-                swapNode(currIndex, nextIndex);
-                currIndex = nextIndex;
-            }
+            swapDownSide(currIndex);
             Node removed = innerMinPQ.remove(getLastIndex());
             innerTable.remove(removed.item);
             return removed.item;
@@ -220,6 +222,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
 
     /**
      * innerMinPQ的多一个虚拟的头节点，所以返回大小要减去1
+     *
      * @return 大小
      */
     @Override
@@ -231,6 +234,67 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T>
     @Override
     public void changePriority(T item, double priority)
     {
+        if (!contains(item))
+        {
+            throw new IllegalArgumentException();
+        }
+        else
+        {
+            //判断变小还是变大
+            int currIndex = innerTable.get(item);
+            Node node = innerMinPQ.get(currIndex);
+            node.priority = priority;
+            int parentIndex = getParentIndex(currIndex);
+            if (parentIndex <= 0)
+            {
+                return;
+            }
+            else if (innerMinPQ.get(parentIndex).compareTo(node) > 0)
+            {
+                //比parent小，向上交换
+                while(currIndex > 1)
+                {
+                    parentIndex = getParentIndex(currIndex);
+                    if(innerMinPQ.get(parentIndex).compareTo(node) > 0)
+                    {
+                        swapNode(currIndex, parentIndex);
+                    }
+                    currIndex = parentIndex;
+                }
+            }
+            else
+            {
+                //否则与左右child中较小的交换
+                swapDownSide(currIndex);
+            }
+        }
+    }
 
+    /**
+     * 向下交换节点
+     * @param currIndex 当前的index下标
+     */
+    public void swapDownSide(int currIndex)
+    {
+        int nextIndex = currIndex;
+        while (currIndex < getLastIndex() - 1)
+        {
+            int leftIndex = getLeftChildIndex(currIndex);
+            int rightIndex = getRightChildIndex(currIndex);
+            if (leftIndex < getLastIndex() && innerMinPQ.get(currIndex).compareTo(innerMinPQ.get(leftIndex)) > 0)
+            {
+                nextIndex = leftIndex;
+            }
+            if (rightIndex < getLastIndex() && innerMinPQ.get(nextIndex).compareTo(innerMinPQ.get(rightIndex)) > 0)
+            {
+                nextIndex = rightIndex;
+            }
+            if (currIndex == nextIndex || nextIndex >= getLastIndex())
+            {
+                break;
+            }
+            swapNode(currIndex, nextIndex);
+            currIndex = nextIndex;
+        }
     }
 }
