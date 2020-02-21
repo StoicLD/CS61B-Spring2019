@@ -1,8 +1,10 @@
 package bearmaps;
 
-import edu.princeton.cs.algs4.In;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import org.junit.Test;
-import org.omg.PortableInterceptor.INACTIVE;
+
+import javax.swing.text.html.HTMLDocument;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -202,6 +204,181 @@ public class ArrayHeapMinPQTest {
         ahm.changePriority(2, 36);
         PrintHeapDemo.printFancyHeapDrawing(ahm.heapArray());
     }
+
+    @Test
+    public void addTimingTest1()
+    {
+        addTimingfHelper(1000);
+        addTimingfHelper(10000);
+    }
+
+    @Test
+    public void addTimingTest2()
+    {
+        long start = System.currentTimeMillis();
+        ArrayHeapMinPQ<Integer> minHeap = new ArrayHeapMinPQ<>();
+        for (int i = 0; i < 200000; i += 1) {
+            minHeap.add(i, 100000 - i);
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("Total time elapsed: " + (end - start) / 1000.0 +  " seconds.");
+
+        long start2 = System.currentTimeMillis();
+        for (int j = 0; j < 200000; j += 1) {
+            minHeap.changePriority(j, j + 1);
+        }
+        long end2 = System.currentTimeMillis();
+        System.out.println("Total time elapsed: " + (end2 - start2) / 1000.0 +  " seconds.");
+    }
+
+    @Test
+    public void removeTimingTest1()
+    {
+        removeTimingHelper(1000);
+        removeTimingHelper(10000);
+        removeTimingHelper(100000);
+    }
+
+    @Test
+    public void changePriorityTimingTest1()
+    {
+        changeTimingHelper(1000);
+        changeTimingHelper(10000);
+        changeTimingHelper(100000);
+    }
+
+//===================================================================================================
+
+    public Set<Integer> randomSet(int totalNum)
+    {
+        if(totalNum < 1)
+        {
+            throw new IllegalArgumentException();
+        }
+
+        Random rng = new Random(); // Ideally just create one instance globally
+        Set<Integer> generated = new LinkedHashSet<>();
+        while (generated.size() < totalNum)
+        {
+            Integer next = rng.nextInt(totalNum) + 1;
+            // As we're adding to a set, this will automatically do a containment check
+            generated.add(next);
+        }
+        return generated;
+    }
+
+    public ArrayList<Integer> randomList(int totalNum)
+    {
+        ArrayList<Integer> generated = new ArrayList<>();
+        if(totalNum < 1)
+        {
+            throw new IllegalArgumentException();
+        }
+
+        Random rng = new Random(); // Ideally just create one instance globally
+        while (generated.size() < totalNum)
+        {
+            Integer next = rng.nextInt(totalNum) + 1;
+            // As we're adding to a set, this will automatically do a containment check
+            if(!generated.contains(next))
+            {
+                generated.add(next);
+            }
+        }
+        return generated;
+    }
+
+    public void addTimingfHelper(int totalNum)
+    {
+
+        Set<Integer> generated = randomSet(totalNum);
+
+        long start = System.currentTimeMillis();
+        ArrayHeapMinPQ<Integer> ahm = new ArrayHeapMinPQ<>();
+        for (Integer it : generated) {
+            ahm.add(it, it);
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("ArrayPQ Total time elapsed: " + (end - start)/1000.0 +  " seconds.");
+
+        start = System.currentTimeMillis();
+        NaiveMinPQ<Integer> nmp = new NaiveMinPQ<>();
+        for (Integer it : generated) {
+            nmp.add(it, it);
+        }
+        end = System.currentTimeMillis();
+        System.out.println("Naive Total time elapsed: " + (end - start)/1000.0 +  " seconds.");
+
+
+    }
+
+    public void removeTimingHelper(int totalNum)
+    {
+        Set<Integer> generated = randomSet(totalNum);
+        ArrayHeapMinPQ<Integer> ahm = new ArrayHeapMinPQ<>();
+        for (Integer it : generated) {
+            ahm.add(it, it);
+        }
+
+        long start = System.currentTimeMillis();
+        for(int i = 0; i < ahm.size(); i++)
+        {
+            ahm.removeSmallest();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("ArrayPQ Total time elapsed: " + (end - start)/1000.0 +  " seconds.");
+
+
+        NaiveMinPQ<Integer> nmp = new NaiveMinPQ<>();
+        for (Integer it : generated) {
+            nmp.add(it, it);
+        }
+
+        start = System.currentTimeMillis();
+        for(int i = 0; i < nmp.size(); i++)
+        {
+            nmp.removeSmallest();
+        }
+        end = System.currentTimeMillis();
+        System.out.println("Naive Total time elapsed: " + (end - start)/1000.0 +  " seconds.");
+    }
+
+    public void changeTimingHelper(int totalNum)
+    {
+        ArrayList<Integer> generated = randomList(totalNum);
+        ArrayList<Integer> originList = new ArrayList<>(generated);
+
+        ArrayHeapMinPQ<Integer> ahm = new ArrayHeapMinPQ<>();
+        for (Integer it : generated) {
+            ahm.add(it, it);
+        }
+        NaiveMinPQ<Integer> npm = new NaiveMinPQ<>();
+        for (Integer it : generated) {
+            npm.add(it, it);
+        }
+
+        Collections.shuffle(generated);
+        long start = System.currentTimeMillis();
+        Iterator originIt = originList.iterator();
+        Iterator genIt = generated.iterator();
+        for ( ; originIt.hasNext() && genIt.hasNext(); ) {
+            ahm.changePriority((Integer) originIt.next(), (Integer) genIt.next());
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("ArrayPQ Total time elapsed: " + (end - start)/1000.0 +  " seconds.");
+
+        start = System.currentTimeMillis();
+        originIt = originList.iterator();
+        genIt = generated.iterator();
+        for ( ; originIt.hasNext() && genIt.hasNext(); ) {
+            npm.changePriority((Integer) originIt.next(), (Integer) genIt.next());
+        }
+        end = System.currentTimeMillis();
+        System.out.println("NaivePQ Total time elapsed: " + (end - start)/1000.0 +  " seconds.");
+
+
+    }
+
 
     public static void main(String args[])
     {
