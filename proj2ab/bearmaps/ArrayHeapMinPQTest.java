@@ -1,6 +1,5 @@
 package bearmaps;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
 import org.junit.Test;
 
 import javax.swing.text.html.HTMLDocument;
