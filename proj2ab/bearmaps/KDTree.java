@@ -13,6 +13,8 @@ public class KDTree
     private KdNode root;
     private int treeHeight;
 
+    private static int callingTimes = 0;
+
     public static class KdNode
     {
         private Point point;
@@ -107,6 +109,14 @@ public class KDTree
         root = insertHelper(root, node, true, 0);
     }
 
+    /**
+     * 插入的helper func，小的节点在右侧，大的在左侧
+     * @param currNode 当前节点
+     * @param insertedNode  插入的节点
+     * @param compareX  当前比较的是x or y，true是x，false是y
+     * @param height    当前的节点深度
+     * @return
+     */
     private KdNode insertHelper(KdNode currNode, KdNode insertedNode, boolean compareX, int height)
     {
         if(currNode == null)
@@ -154,8 +164,86 @@ public class KDTree
     }
     */
 
+    public static int getTimes()
+    {
+        return callingTimes;
+    }
+
+    /**
+     * 先尝试实现一个lecture note上面的版本
+     * @param x x坐标
+     * @param y y坐标
+     * @return Kd树中最近的点
+     */
     public Point nearest(double x, double y)
     {
-        return null;
+        callingTimes = 0;
+        //(TreeHeight - height) % 2来判定x还是y
+        Point targetPoint = new Point(x, y);
+        return nearestHelper(root, targetPoint, root.getPoint());
     }
+
+    private Point nearestHelper(KdNode currNode, Point targetPoint, Point currBestPoint)
+    {
+        callingTimes++;
+        if(currNode == null)
+        {
+            return currBestPoint;
+        }
+        if(currNode.getPoint().equals(targetPoint))
+        {
+            return currNode.getPoint();
+        }
+        else
+        {
+            double dis = Point.distance(currNode.getPoint(), targetPoint);
+            if(dis < Point.distance(currBestPoint, targetPoint))
+            {
+                currBestPoint = currNode.getPoint();
+            }
+
+            KdNode goodNode;
+            KdNode badNode;
+            double directDis = 0;
+            //比较X
+            if((currNode.height % 2) == 0)
+            {
+                directDis = Math.abs(currNode.getPoint().getX() - targetPoint.getX());
+                if(targetPoint.getX() < currNode.getPoint().getX())
+                {
+                    goodNode = currNode.leftNode;
+                    badNode = currNode.rightNode;
+                }
+                else
+                {
+                    goodNode = currNode.rightNode;
+                    badNode = currNode.leftNode;
+                }
+            }
+            else
+            {
+                //比较Y
+                directDis = Math.abs(currNode.getPoint().getY() - targetPoint.getY());
+                if(targetPoint.getY() < currNode.getPoint().getY())
+                {
+                    goodNode = currNode.leftNode;
+                    badNode = currNode.rightNode;
+                }
+                else
+                {
+                    goodNode = currNode.rightNode;
+                    badNode = currNode.leftNode;
+                }
+            }
+            currBestPoint = nearestHelper(goodNode, targetPoint, currBestPoint);
+
+            //下面是决定是否要访问badNode那一个分支
+            if(Point.distance(currBestPoint, targetPoint) > directDis * directDis)
+            {
+                currBestPoint = nearestHelper(badNode, targetPoint, currBestPoint);
+            }
+            return currBestPoint;
+        }
+    }
+
 }

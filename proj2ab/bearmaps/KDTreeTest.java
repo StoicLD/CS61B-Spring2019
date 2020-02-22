@@ -30,4 +30,16 @@ public class KDTreeTest
         KDTree kdTree = new KDTree(list);
         BTreePrinter.printNode(kdTree.getRoot(), 9);
     }
+
+    @Test
+    public void nearestTest1()
+    {
+        List<Point> list = List.of(new Point(2,3),
+                new Point(4,2),
+                new Point(4, 5), new Point(3, 3),
+                new Point(4, 4), new Point(1, 5));
+        KDTree kdTree = new KDTree(list);
+        assertEquals(new Point(1, 5), kdTree.nearest(0, 7));
+        System.out.println(KDTree.getTimes());
+    }
 }
