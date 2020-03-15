@@ -68,12 +68,51 @@ public class WordGraph implements AStarGraph<String> {
         readWords();
     }
 
-    @Override
+/*    @Override
     public List<WeightedEdge<String>> neighbors(String s) {
         List<WeightedEdge<String>> neighbs = new ArrayList<>();
         for (String w : words) {
             if (editDistance(s, w) == 1) {
                 neighbs.add(new WeightedEdge(s, w, 1));
+            }
+        }
+        return neighbs;
+    }*/
+    @Override
+    public List<WeightedEdge<String>> neighbors(String s) {
+        List<WeightedEdge<String>> neighbs = new ArrayList<>();
+        //删除
+        String sDelete = s.substring(1);
+        for(int i = 0; i < s.length(); i++)
+        {
+            if(words.contains(sDelete))
+            {
+                neighbs.add(new WeightedEdge<>(s, sDelete, 1));
+            }
+            sDelete = s.substring(0, i) + s.substring(i + 1);
+        }
+        //添加,默认都是小写字母
+        for(int i = 0; i <= s.length(); i++)
+        {
+            for(char c = 'a'; c <= 'z'; c++)
+            {
+                String sAdd = s.substring(0, i) + c + s.substring(i);
+                if(words.contains(sAdd))
+                {
+                    neighbs.add(new WeightedEdge<>(s, sAdd, 1));
+                }
+            }
+        }
+        //替换
+        for(int i = 0; i < s.length(); i++)
+        {
+            for(char c = 'a'; c <= 'z'; c++)
+            {
+                String sSub = s.substring(0, i) + c + s.substring(i + 1);
+                if(words.contains(sSub))
+                {
+                    neighbs.add(new WeightedEdge<>(s, sSub, 1));
+                }
             }
         }
         return neighbs;

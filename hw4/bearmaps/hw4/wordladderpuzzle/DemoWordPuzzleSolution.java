@@ -1,6 +1,7 @@
 package bearmaps.hw4.wordladderpuzzle;
 
 
+import bearmaps.hw4.AStarSolver;
 import bearmaps.hw4.LazySolver;
 import bearmaps.hw4.ShortestPathsSolver;
 import bearmaps.hw4.SolutionPrinter;
@@ -19,7 +20,17 @@ public class DemoWordPuzzleSolution {
 
         WordGraph wg = new WordGraph();
 
-        ShortestPathsSolver<String> solver = new LazySolver<>(wg, start, goal, 10);
+        ShortestPathsSolver<String> solver = new AStarSolver<>(wg, start, goal, 10);
         SolutionPrinter.summarizeSolution(solver, "->");
+
+        String start2 = "contract";
+        String goal2 = "contrast";
+
+        WordGraph wg2 = new WordGraph();
+
+        ShortestPathsSolver<String> solver2 = new AStarSolver<>(wg2, start2, goal2, 100);
+        SolutionPrinter.summarizeSolution(solver2, "->");
+
+
     }
 }
