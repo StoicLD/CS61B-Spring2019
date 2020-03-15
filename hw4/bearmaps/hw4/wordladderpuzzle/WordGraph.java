@@ -78,6 +78,14 @@ public class WordGraph implements AStarGraph<String> {
         }
         return neighbs;
     }*/
+
+    /**
+     * 不同于查找words文件中的每个单词，
+     * 我选择对于每个单词找到其全部editDistance为1的单词，
+     * 然后再去words中查找（因为是HashTable，所以会快一些）
+     * @param s 单词
+     * @return 查找的距离为1的邻居list
+     */
     @Override
     public List<WeightedEdge<String>> neighbors(String s) {
         List<WeightedEdge<String>> neighbs = new ArrayList<>();
