@@ -17,8 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static bearmaps.proj2c.utils.Constants.SEMANTIC_STREET_GRAPH;
-import static bearmaps.proj2c.utils.Constants.ROUTE_LIST;
+import static bearmaps.proj2c.utils.Constants.*;
 
 /**
  * Handles requests from the web browser for map images. These images
@@ -45,6 +44,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
     private static final String[] REQUIRED_RASTER_RESULT_PARAMS = {"render_grid", "raster_ul_lon",
             "raster_ul_lat", "raster_lr_lon", "raster_lr_lat", "depth", "query_success"};
 
+    private static final int MAX_LEVEL = 7;
 
     @Override
     protected Map<String, Double> parseRequestParams(Request request) {
@@ -83,12 +83,73 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
      *                    forget to set this to true on success! <br>
      */
     @Override
-    public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response) {
-        //System.out.println("yo, wanna know the parameters given by the web browser? They are:");
-        //System.out.println(requestParams);
+    public Map<String, Object> processRequest(Map<String, Double> requestParams, Response response)
+    {
+        System.out.println("yo, wanna know the parameters given by the web browser? They are:");
+        System.out.println(requestParams);
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
-                + "your browser.");
+        /*
+            {"ullat", "ullon", "lrlat", "lrlon", "w", "h"}
+         */
+        //先要算一个请求的LonDPP
+        if (!checkParams(requestParams))
+        {
+            return queryFail();
+        }
+        double ullat = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[0]);
+        double ullon = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[1]);
+        double lrlat = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[2]);
+        double lrlon = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[3]);
+        double w = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[4]);
+        double h = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[5]);
+
+        double LonDPP = (lrlon - ullon) / w;
+        //(1)选择一个合适的size，一共从0到7，8个层级的depth
+        double preLevel = (ROOT_LRLON - ROOT_ULLON) / (LonDPP * TILE_SIZE);
+        int level = 0;
+        if (preLevel <= 0)
+            return queryFail();
+        else if (preLevel > 128)
+            level = 7;
+        else
+            level = (int) Math.round(Math.ceil(Math.log(preLevel) / Math.log(2)));
+
+        //(2)定位该depth下需要包含哪些图片
+        int xStart = 0, yStart = 0, xEnd = 0, yEnd = 0;
+        double lonLength = ROOT_LRLON - ROOT_ULLON;
+        double latLength = ROOT_LRLAT - ROOT_ULLAT;
+
+        int tileWidth = (int)Math.pow(2, level);
+        xStart = Math.max(0, (int) Math.floor(tileWidth * (ullon - ROOT_ULLON) / lonLength));
+
+        xEnd = Math.min(tileWidth - 1, (int) Math.floor(tileWidth * (lrlon - ROOT_ULLON) / lonLength));
+
+        yStart = Math.max(0, (int) Math.floor(tileWidth * (ullat - ROOT_ULLAT) / latLength));
+
+        yEnd = Math.min(tileWidth - 1, (int) Math.floor(tileWidth * (lrlat - ROOT_ULLAT) / latLength));
+        String[][] render_grids = new String[yEnd - yStart + 1][xEnd - xStart + 1];
+        for (int i = xStart; i <= xEnd; i++)
+        {
+            for (int j = yStart; j <= yEnd; j++)
+            {
+                render_grids[j - yStart][i - xStart] = "d" + level + "_x" + i + "_y" + j + ".png";
+            }
+        }
+        results.put(REQUIRED_RASTER_RESULT_PARAMS[0], render_grids);
+        double raster_ul_lon = ROOT_ULLON + (lonLength / tileWidth) * xStart;
+        double raster_lr_lon = ROOT_LRLON - (lonLength / tileWidth) * (tileWidth - xEnd - 1);
+
+        double raster_ul_lat = ROOT_ULLAT + (latLength / tileWidth) * yStart;
+        double raster_lr_lat = ROOT_LRLAT - (latLength / tileWidth) * (tileWidth - yEnd - 1);
+        results.put(REQUIRED_RASTER_RESULT_PARAMS[1], raster_ul_lon);
+        results.put(REQUIRED_RASTER_RESULT_PARAMS[2], raster_ul_lat);
+        results.put(REQUIRED_RASTER_RESULT_PARAMS[3], raster_lr_lon);
+        results.put(REQUIRED_RASTER_RESULT_PARAMS[4], raster_lr_lat);
+        results.put(REQUIRED_RASTER_RESULT_PARAMS[5], level);
+        results.put(REQUIRED_RASTER_RESULT_PARAMS[6], true);
+
+        //System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
+        //        + "your browser.");
         return results;
     }
 
@@ -115,6 +176,31 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         results.put("depth", 0);
         results.put("query_success", false);
         return results;
+    }
+
+    private boolean checkParams(Map<String, Double> requestParams)
+    {
+        if(requestParams == null || requestParams.size() != REQUIRED_RASTER_REQUEST_PARAMS.length)
+        {
+            return false;
+        }
+        double ullat = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[0]);
+        /*
+        if(ullat < ROOT_ULLAT || ullat > ROOT_LRLAT)
+            return false;
+        double ullon = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[1]);
+        if(ullon < ROOT_ULLON || ullon > ROOT_LRLON)
+            return false;
+        double lrlat = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[2]);
+        if(lrlat < ROOT_ULLAT || lrlat > ROOT_LRLAT)
+            return false;
+        double lrlon = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[3]);
+        if(lrlon < ROOT_ULLON || lrlon > ROOT_LRLON)
+            return false;
+        */
+        double w = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[4]);
+        double h = requestParams.get(REQUIRED_RASTER_REQUEST_PARAMS[5]);
+        return w >= 0 && h >= 0;
     }
 
     /**
