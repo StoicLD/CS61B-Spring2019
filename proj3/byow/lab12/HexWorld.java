@@ -15,6 +15,22 @@ import java.util.Random;
  */
 public class HexWorld
 {
+    private static final long SEED = 2873123;
+    private static final Random RANDOM = new Random(SEED);
+
+    private static TETile randomTile()
+    {
+        int tileNum = RANDOM.nextInt(5);
+        switch (tileNum) {
+            case 0: return Tileset.WALL;
+            case 1: return Tileset.FLOWER;
+            case 2: return Tileset.GRASS;
+            case 3: return Tileset.AVATAR;
+            case 4: return Tileset.TREE;
+            default: return Tileset.SAND;
+        }
+    }
+
 
     /**
      * 添加一个六边形瓦片
@@ -54,8 +70,52 @@ public class HexWorld
         }
     }
 
-    private static int WIDTH = 60;
-    private static int HEIGHT = 40;
+    /**
+     * 创建一个随机Title的pattern
+     * @param world 世界数组
+     * @param p 中间列的最下面一个hex的左下角
+     * @param s 大小
+     */
+    public static void makeHexagonPattern(TETile[][] world, Position p, int s)
+    {
+        makeColumnHexagonRandom(world, new Position(p.x, p.y), s, 2 * s - 1);
+        //先往左走
+        for(int i = 1; i < s; i++)
+        {
+            //makeColumnHexagon(world, new Position(p.x - i * (2 * s - 1), p.y + i * s), s, 2 * s - 1 - i, randomTile());
+            makeColumnHexagonRandom(world, new Position(p.x - i * (2 * s - 1), p.y + i * s), s, 2 * s - 1 - i);
+        }
+
+        //再往右边走
+        for(int i = 1; i < s; i++)
+        {
+            makeColumnHexagonRandom(world, new Position(p.x + i * (2 * s - 1), p.y + i * s), s, 2 * s - 1 - i);
+        }
+    }
+
+    public static void makeColumnHexagon(TETile[][] world, Position p, int s, int colSize, TETile t)
+    {
+        for(int i = 0; i < colSize; i++)
+        {
+            p.y += 2 * s;
+            addHexagon(world, p, s, t);
+
+        }
+    }
+
+    // p 是最下面一个左下角的坐标
+    public static void makeColumnHexagonRandom(TETile[][] world, Position p, int s, int colSize)
+    {
+        for(int i = 0; i < colSize; i++)
+        {
+            p.y += 2 * s;
+            addHexagon(world, p, s, randomTile());
+        }
+    }
+
+
+    private static int WIDTH = 80;
+    private static int HEIGHT = 60;
     public static void main(String[] args)
     {
         TERenderer ter = new TERenderer();
@@ -70,7 +130,8 @@ public class HexWorld
                 world[x][y] = Tileset.NOTHING;
             }
         }
-        addHexagon(world, new Position(10, 10), 4, Tileset.FLOWER);
+        //addHexagon(world, new Position(10, 10), 4, Tileset.FLOWER);
+        makeHexagonPattern(world, new Position( WIDTH / 2, 10), 3);
         ter.renderFrame(world);
     }
 }
