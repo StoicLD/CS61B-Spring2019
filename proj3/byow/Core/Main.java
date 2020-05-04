@@ -12,6 +12,7 @@ public class Main {
         } else if (args.length == 1) {
             Engine engine = new Engine();
             engine.interactWithInputString(args[0]);
+            engine.render();
             System.out.println(engine.toString());
         } else {
             Engine engine = new Engine();
