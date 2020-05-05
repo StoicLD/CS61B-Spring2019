@@ -9,7 +9,7 @@ public class Room
     private int x;
     private int y;
 
-    public Room(int width, int height, int x, int y)
+    public Room(int x, int y, int width, int height)
     {
         this.width = width;
         this.height = height;

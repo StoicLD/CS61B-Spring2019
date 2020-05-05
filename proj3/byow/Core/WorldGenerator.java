@@ -34,7 +34,7 @@ public class WorldGenerator
         WIDTH = _w;
         HEIGHT = _h;
         world = _world;
-        numRoomEntries = RandomUtils.uniform(random, 20,40);
+        numRoomEntries = RandomUtils.uniform(random, 150,500);
         rooms = new ArrayList<>();
         generateRoom();
     }
@@ -66,17 +66,16 @@ public class WorldGenerator
             Room room = new Room(x, y, w, h);
             //  判断新房间是否与已存在的房间重叠
             boolean overlaps = false;
-            /*
             for (var other : rooms)
             {
-                if (isOverlap(room, other))
+                //需要双重判断，泥中有我和我中有你
+                if (isOverlap(room, other) || isOverlap(other, room))
                 {
                     overlaps = true;
                     break;
                 }
             }
-            */
-            if (isOverlap(room))
+            if (overlaps)
             {
                 continue;
             }
@@ -102,27 +101,25 @@ public class WorldGenerator
      * @param room 房间对象
      * @return 重叠与否
      */
-    private boolean isOverlap(Room room)
+    private boolean isOverlap(Room room, Room other)
     {
-        int xMin = room.getX() - 1;
-        int xMax = room.getX() + room.getWidth();
-        int yMin = room.getY() - 1;
-        int yMax= room.getY() + room.getHeight();
-        if((checkIndex(xMin, yMin) && (world[xMin][yMin] == Tileset.FLOOR || world[xMin][yMin] == Tileset.WALL))
-                || (checkIndex(xMin, yMin) && (world[xMax][yMin] == Tileset.FLOOR || world[xMax][yMin] == Tileset.WALL))
-                || (checkIndex(xMin, yMin) && (world[xMin][yMax] == Tileset.FLOOR || world[xMin][yMax] == Tileset.WALL))
-                || (checkIndex(xMin, yMin) && (world[xMax][yMax] == Tileset.FLOOR || world[xMax][yMax] == Tileset.WALL)))
-            return true;
-        /*
+        int xMin = room.getX();
+        int xMax = room.getX() + room.getWidth() - 1;
+        int yMin = room.getY();
+        int yMax= room.getY() + room.getHeight() - 1;
+/*        if((checkIndex(xMin, yMin) && (world[xMin][yMin].equals(Tileset.FLOOR) || world[xMin][yMin].equals(Tileset.WALL)))
+                || (checkIndex(xMax, yMin) && (world[xMax][yMin].equals(Tileset.FLOOR) || world[xMax][yMin].equals(Tileset.WALL)))
+                || (checkIndex(xMin, yMax) && (world[xMin][yMax].equals(Tileset.FLOOR) || world[xMin][yMax].equals(Tileset.WALL)))
+                || (checkIndex(xMax, yMax) && (world[xMax][yMax].equals(Tileset.FLOOR) || world[xMax][yMax].equals(Tileset.WALL))))
+            return true;*/
         if(isOverlapHelper(xMin, xMax, yMin, yMax, other.getX(), other.getY()))
-            return false;
+            return true;
         if(isOverlapHelper(xMin, xMax, yMin, yMax, other.getX() + other.getWidth() - 1, other.getY()))
-            return false;
+            return true;
         if(isOverlapHelper(xMin, xMax, yMin, yMax, other.getX(), other.getY() + other.getHeight() - 1))
-            return false;
+            return true;
         if(isOverlapHelper(xMin, xMax, yMin, yMax, other.getX() + other.getWidth() - 1, other.getY() + other.getHeight() - 1))
-            return false;
-        */
+            return true;
         return false;
     }
 
@@ -133,7 +130,7 @@ public class WorldGenerator
 
     private boolean isOverlapHelper(int xMin, int xMax, int yMin, int yMax, int x, int y)
     {
-        return x >= xMin && x <= xMax && y >= xMin && y <= xMax;
+        return x >= xMin && x <= xMax && y >= yMin && y <= yMax;
     }
 
     private void carve(int i, int j, TETile tileset)
